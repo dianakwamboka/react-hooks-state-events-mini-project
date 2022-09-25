@@ -1,21 +1,33 @@
-import React from "react";
+import React, { useState } from "react";
+import CategoryFilter from "./CategoryFilter";
+import NewTaskForm from "./NewTaskForm";
+import TaskList from "./TaskList";
+import { CATEGORIES, TASKS } from "../data";
 
-function NewTaskForm() {
+function App() {
+  const [tasks,setTasks] = useState(TASKS);
+  const [category, setCategory ] = useState("All");
+
+  const displayTaskCategories = tasks.filter((task) => 
+    category === "All" || task.category === category
+  )
+  
+  function removeTask(taskText){
+    setTasks(tasks.filter((task) => task.text !== taskText))
+  }
+
+  function addTask(otherTask){
+    setTasks([...tasks,otherTask]);
+  }
+
   return (
-    <form className="new-task-form">
-      <label>
-        Details
-        <input type="text" name="text" />
-      </label>
-      <label>
-        Category
-        <select name="category">
-          {/* render <option> elements for each category here */}
-        </select>
-      </label>
-      <input type="submit" value="Add task" />
-    </form>
+    <div className="App">
+      <h2>My tasks</h2>
+      <CategoryFilter categories={CATEGORIES} selectCategory={category} handleSelectCategory={setCategory}/>
+      <NewTaskForm categories={CATEGORIES} onTaskFormSubmit={addTask}/>
+      <TaskList tasks={displayTaskCategories} deleteTask={removeTask} />
+    </div>
   );
 }
 
-export default NewTaskForm;
+export default App;
